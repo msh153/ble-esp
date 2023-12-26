@@ -16,8 +16,19 @@ export const DeviceList = ({peripheral, connect, disconnect}) => {
           </View>
 
           <TouchableOpacity
-            onPress={() =>
-              connected ? disconnect(peripheral) : connect(peripheral)
+            onPress={() => connect(peripheral)}
+            style={styles.deviceButton}>
+            <Text
+              style={[
+                styles.scanButtonText,
+                {fontWeight: 'bold', fontSize: 16},
+              ]}>
+              {'Connect'}
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            onPress={() => disconnect(peripheral)
             }
             style={styles.deviceButton}>
             <Text
@@ -25,7 +36,7 @@ export const DeviceList = ({peripheral, connect, disconnect}) => {
                 styles.scanButtonText,
                 {fontWeight: 'bold', fontSize: 16},
               ]}>
-              {connected ? 'Disconnect' : 'Connect'}
+              {'Disconnect'}
             </Text>
           </TouchableOpacity>
         </View>
