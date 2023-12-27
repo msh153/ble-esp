@@ -7,62 +7,60 @@ const BleManagerModule = NativeModules.BleManager;
 const bleEmitter = new NativeEventEmitter(BleManagerModule);
 import BleManager from "react-native-ble-manager";
 
-export default function GraphicScreen({deviceId}) {
-  const [data, setData] = useState([1,2,1,2,1,2,1,2, 1,2,1,2, 1,2,1,2 ]);
-  const [contentOffset, setContentOffset] = useState(0);
-  const handleDisconnectedPeripheral = data => {
-    alert('Disconnected from ' + data.peripheral);
-  };  
-  const handleDidUpdateValueForCharacteristic = (data) => {
-    const first = parseInt(data.value[0]); 
-    const second = parseInt(data.value[1]);
+export default function GraphicScreen({data}) {
+  const windowWidth = Dimensions.get('window').width; 
+  const [chartWidth, setChartWith] = useState(windowWidth);
+  const pointsPerScreen = 30;
 
-    // Зсунути та об'єднати
-    const result = (second << 8) + first;
-    console.log(
-      "Data: " + result
-    )
-    setData(prev => [...prev, result])
-  }
-  useEffect(() => {    
-    if(!deviceId) return;
+  useEffect(()=>{
+    if(data.length < pointsPerScreen)
+      return;
+    setChartWith(data.length / pointsPerScreen * windowWidth)
+  }, [data.length]);
 
-    BleManager.connect(deviceId);
-    alert(deviceId)
-    try{
-      BleManager.startNotification(deviceId,ESPEcg.service,ESPEcg.characteristic);
-    } catch(e){
-      alert(e)
-    }
-
-    bleEmitter.addListener(
-      'BleManagerDisconnectPeripheral',
-      handleDisconnectedPeripheral,
-    );
-    bleEmitter.addListener(
-      'BleManagerDidUpdateValueForCharacteristic',
-      handleDidUpdateValueForCharacteristic,
-    );
-    
-
-    return () => {
-      console.log('Unmount');
-
-      bleEmitter.removeAllListeners();
-    };
-  }, [deviceId]);
   return (
     <SafeAreaView >
       <ScrollView
-        contentOffset={{x: 0, y: contentOffset}}
-        onContentSizeChange={(_, height) => {
-          setContentOffset(height);
-        }}
+        horizontal={true}
+        contentOffset={{x: 26.5625 * data.length, y: 0}}
+        showsHorizontalScrollIndicator={false}
         >
-          <Text>Дані:</Text>
-          {!!data && data.map((value, index) => (
-            <Text key={index}>{"    " + value}</Text>  
-          ))}
+          <LineChart
+            withDots={false}
+            withVerticalLines={false}
+            withHorizontalLines={false}
+            withShadow={false}
+            chartConfig={{
+            backgroundColor: "#ffff",
+            backgroundGradientFrom: "#ffff",
+            backgroundGradientTo: "#ffff",
+            decimalPlaces: 2, // optional, defaults to 2dp
+            color: (opacity = 1) => `rgba(46, 204, 113  , ${opacity})`,
+            labelColor: (opacity = 1) => `rgba(28, 40, 51 , ${opacity})`,
+            style: {
+              borderRadius: 16,
+            },
+            propsForDots: {
+              r: "6",
+              strokeWidth: "2",
+              stroke: "#2ECC71",
+            },
+            }}
+            opacity={0}
+            data={{
+              // labels: ["January", "February", "March", "April", "May", "June"],
+              legend: [`{legend}`],
+              datasets: [
+                {
+                  data: data,
+                  backgroundColor: '#e26a00',
+                }
+              ]
+            }}
+            bezier
+            width={chartWidth}
+            height={Dimensions.get('window').height - (Dimensions.get('window').height/100*15)}
+          />
         </ScrollView>
     </SafeAreaView>
   );

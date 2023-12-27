@@ -3,7 +3,7 @@ import 'react-native-gesture-handler';
 import React, { useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import ScanScreen from './ScanScreen';
-import GraphicScreen from './GraphicScreen';
+import DataScreen from './DataScreen';
 import {
     createDrawerNavigator,
 } from '@react-navigation/drawer';
@@ -28,13 +28,13 @@ const App = () => {
                         }}>
                             {() => <ScanScreen setDeviceId={setDeviceId}/>}
                         </Drawer.Screen>
-                        <Drawer.Screen name="Graphic" options={{
+                        <Drawer.Screen name="Data" options={{
                             drawerIcon: ({color, size} ) => <MaterialCommunityIcons
                                 size={size}
                                 color={color}
                                 name="heart-pulse"></MaterialCommunityIcons>
                         }}>
-                            {() => <GraphicScreen deviceId={deviceId}/>}
+                            {() => <DataScreen deviceId={deviceId}/>}
                         </Drawer.Screen>
                     </Drawer.Navigator>
                 </NavigationContainer>
