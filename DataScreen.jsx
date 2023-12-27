@@ -13,15 +13,17 @@ import TerminalScreen from './TerminalScreen';
 import GraphicScreen from './GraphicScreen';
 
 export default function DataScreen({deviceId}) {
-  const [data, setData] = useState([0]);
+  const [data, setData] = useState([
+    -2849,3306,3263,2832,2152,1175,114,0,0,0,0,0,0,0,0,0,0,710,1657,2513,3238,3738,3738,3198,2487,1558,465,0,0,0,0,0,0,0,0,935,1791,2670,3430,3999,4043,3483,2704,1793,702,0,0,0,0,0,0,0,0,0,118,989,1957,2839,3681,4095,4095,3759,2887,1971,870,0,0,0,0,0,0,0,392,1311,2288,3249,4095,4095,4095,4095,3467,2525,1453,406,0,0,0,0,0,0,628,1599,2588,3679,4095,4095,4095,4095,4065,2959,1915,821,0,4095,4095,3095,2067,967,41,0,0,0,0,0,0,83,4095,4095,4095,4095,4095,4095,4095,4095,3231,2237,1270,464,0
+  ]);
 
   const handleDisconnectedPeripheral = data => {
     alert('Disconnected from ' + data.peripheral);
   };  
   
-  const handleDidUpdateValueForCharacteristic = (data) => {
-    const first = parseInt(data.value[0]); 
-    const second = parseInt(data.value[1]);
+  const handleDidUpdateValueForCharacteristic = (receivedData) => {
+    const first = parseInt(receivedData.value[0]); 
+    const second = parseInt(receivedData.value[1]);
 
     // Зсунути та об'єднати
     const result = (second << 8) + first;
@@ -42,8 +44,6 @@ export default function DataScreen({deviceId}) {
           clearInterval(repeater);
         }
       }, 1000);
-
-      const value = Math.floor(Math.random() * (10 - 1) + 1);
 
     if(!deviceId) return;
 

@@ -1,34 +1,40 @@
 import React, { useState, useEffect } from 'react';
-import { View, Dimensions, Text, ScrollView, SafeAreaView, NativeModules, NativeEventEmitter  } from 'react-native';  
+import { Dimensions, ScrollView, SafeAreaView, Button } from 'react-native';  
 import { LineChart } from 'react-native-chart-kit';
-import { ESPEcg } from './src/ESPEcgTag'
 
-const BleManagerModule = NativeModules.BleManager;
-const bleEmitter = new NativeEventEmitter(BleManagerModule);
-import BleManager from "react-native-ble-manager";
 
 export default function GraphicScreen({data}) {
   const windowWidth = Dimensions.get('window').width; 
   const [chartWidth, setChartWith] = useState(windowWidth);
+  const [stopWidth, setStopWidth] = useState(false);
   const pointsPerScreen = 30;
+  const [kalmanData, setKalmanData] = useState([0,2]);
+  const [contentOffset, setContentOffset] = useState({ x: 26.5625 * data.length, y: 0 });
 
   useEffect(()=>{
-    if(data.length < pointsPerScreen)
-      return;
-    setChartWith(data.length / pointsPerScreen * windowWidth)
-  }, [data.length]);
+    const filteredData = calculateKalmanData(data);
+      setKalmanData(filteredData); 
 
+    if(data.length < pointsPerScreen) return;
+      setChartWith(data.length / pointsPerScreen * windowWidth)
+
+    if(stopWidth)
+      setContentOffset({x:0, y:0});
+    else
+      setContentOffset({ x: 26.5625 * data.length, y: 0 });
+
+  }, [data.length]);
+  
   return (
     <SafeAreaView >
+      <Button title={stopWidth ? "Follow" : "Stop"} onPress={() => setStopWidth(!stopWidth)}/>
       <ScrollView
         horizontal={true}
-        contentOffset={{x: 26.5625 * data.length, y: 0}}
+        contentOffset={contentOffset}
         showsHorizontalScrollIndicator={false}
         >
           <LineChart
             withDots={false}
-            withVerticalLines={false}
-            withHorizontalLines={false}
             withShadow={false}
             chartConfig={{
             backgroundColor: "#ffff",
@@ -40,29 +46,61 @@ export default function GraphicScreen({data}) {
             style: {
               borderRadius: 16,
             },
-            propsForDots: {
-              r: "6",
-              strokeWidth: "2",
-              stroke: "#2ECC71",
-            },
-            }}
+            propsForLabels: {
+              fontSize: 12
+            }}}
             opacity={0}
             data={{
-              // labels: ["January", "February", "March", "April", "May", "June"],
-              legend: [`{legend}`],
+              legend: ['Origin', 'Kalman filter'],
               datasets: [
                 {
                   data: data,
                   backgroundColor: '#e26a00',
-                }
+                },
+                {
+                  data: kalmanData, //Kalman Values
+                  color: (opacity = 1) => `rgba(255,0,0,${opacity})`,
+                },
               ]
             }}
+            yAxisLabel={'mV '} 
             bezier
             width={chartWidth}
-            height={Dimensions.get('window').height - (Dimensions.get('window').height/100*15)}
+            height={Dimensions.get('window').height - (Dimensions.get('window').height/100*25)}
+            verticalLabelRotation={-90}
           />
         </ScrollView>
     </SafeAreaView>
   );
 
+}
+
+function calculateKalmanData(data) {
+
+  // Параметри фільтра Калмана
+  const R = 0.01; // Шум вимірювань 
+  const Q = 0.03; // Шум процесу
+
+  const kalmanData = [];
+  
+  // Стан фільтра
+  let x = 0;  
+  let p = 1;
+  
+  for(let i = 0; i < data.length; i++) {
+
+    // Прогноз
+    const x_prior = x;
+    const p_prior = p + Q;
+
+    // Оновлення
+    const k = p_prior / (p_prior + R);
+    x = x_prior + k * (data[i] - x_prior);
+    p = (1 - k) * p_prior;
+
+    // Збереження фільтрованого значення
+    kalmanData.push(x); 
+  }
+
+  return kalmanData;
 }

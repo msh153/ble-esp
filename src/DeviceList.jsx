@@ -3,8 +3,8 @@ import {View, Text, TouchableOpacity} from 'react-native';
 import React from 'react';
 import {styles} from './styles/styles';
 
-export const DeviceList = ({peripheral, connect, disconnect}) => {
-  const {name, rssi, connected} = peripheral;
+export const DeviceList = ({ peripheral, connect, disconnect }) => {
+  const { name, rssi } = peripheral;
 
   return (
     <>
@@ -28,8 +28,7 @@ export const DeviceList = ({peripheral, connect, disconnect}) => {
           </TouchableOpacity>
 
           <TouchableOpacity
-            onPress={() => disconnect(peripheral)
-            }
+            onPress={() => disconnect(peripheral)}
             style={styles.deviceButton}>
             <Text
               style={[

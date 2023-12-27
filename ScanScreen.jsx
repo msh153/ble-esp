@@ -85,7 +85,7 @@ const ScanScreen = ({setDeviceId}) => {
       'BleManagerConnectPeripheral',
       peripheral => {
         alert('BleManagerConnectPeripheral:', peripheral);
-        setChosenPeripheral(peripheral)
+        setChosenPeripheral(peripheral);
       },
     );
 
