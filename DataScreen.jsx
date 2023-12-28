@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { NativeModules, NativeEventEmitter  } from 'react-native';  
-import { ESPEcg } from './src/ESPEcgTag'
+import { NativeModules, NativeEventEmitter  } from 'react-native';
+import { ESPEcg } from './src/ESPEcgTag';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -14,48 +14,27 @@ import TerminalScreen from './TerminalScreen';
 import GraphicScreen from './GraphicScreen';
 
 export default function DataScreen({deviceId}) {
-  const [data, setData] = useState([
-    -2849,3306,3263,2832,2152,1175,114,0,0,0,0,0,0,0,0,0,0,710,1657,2513,3238,3738,3738,3198,2487,1558,465,0,0,0,0,0,0,0,0,935,1791,2670,3430,3999,4043,3483,2704,1793,702,0,0,0,0,0,0,0,0,0,118,989,1957,2839,3681,4095,4095,3759,2887,1971,870,0,0,0,0,0,0,0,392,1311,2288,3249,4095,4095,4095,4095,3467,2525,1453,406,0,0,0,0,0,0,628,1599,2588,3679,4095,4095,4095,4095,4065,2959,1915,821,0,4095,4095,3095,2067,967,41,0,0,0,0,0,0,83,4095,4095,4095,4095,4095,4095,4095,4095,3231,2237,1270,464,0
-  ]);
+  const [data, setData] = useState([0]);
 
+  const parseData = (receivedData) => {
+    const first = parseInt(receivedData.value[0], 10);
+    const second = parseInt(receivedData.value[1], 10);
+
+    return (second << 8) + first;
+  };
   const handleDisconnectedPeripheral = data => {
     alert('Disconnected from ' + data.peripheral);
-  };  
-  
+  };
+
   const handleDidUpdateValueForCharacteristic = (receivedData) => {
-    const first = parseInt(receivedData.value[0]); 
-    const second = parseInt(receivedData.value[1]);
-
-    // Зсунути та об'єднати
-    const result = (second << 8) + first;
-    console.log(
-      "Data: " + result
-    )
-    setData(prev => [...prev, result])
-  }
-
-  useEffect(() => {    
-      var callCount = 1;
-      var repeater = setInterval(function () {
-        if (callCount < 30) {
-          callCount += 1;
-          let val = Math.floor(Math.random() * (10 - 1) + 1);
-          setData(prev => [...prev, val]);
-        } else {
-          clearInterval(repeater);
-        }
-      }, 1000);
-
-    if(!deviceId) return;
+    const result = parseData(receivedData);
+    setData(prev => [...prev, result]);
+  };
+  useEffect(() => {
+    if (!deviceId) {return;}
 
     BleManager.connect(deviceId);
-    alert(deviceId)
-    try{
-      BleManager.startNotification(deviceId,ESPEcg.service,ESPEcg.characteristic);
-    } catch(e){
-      alert(e)
-    }
-
+    BleManager.startNotification(deviceId,ESPEcg.service,ESPEcg.characteristic);
     bleEmitter.addListener(
       'BleManagerDisconnectPeripheral',
       handleDisconnectedPeripheral,
@@ -64,7 +43,7 @@ export default function DataScreen({deviceId}) {
       'BleManagerDidUpdateValueForCharacteristic',
       handleDidUpdateValueForCharacteristic,
     );
-    
+
 
     return () => {
       console.log('Unmount');
@@ -79,7 +58,7 @@ export default function DataScreen({deviceId}) {
               screenOptions={({ route }) => ({
                 tabBarIcon: ({ focused, color, size }) => {
                   let iconName;
-      
+
                   if (route.name === 'Graphic') {
                     iconName = 'heart-pulse';
                       return <MaterialCommunityIcons  name={iconName} size={size} color={color} />;
@@ -94,12 +73,12 @@ export default function DataScreen({deviceId}) {
                 headerShown: false,
               })}
             >
-                  <Tab.Screen name="Graphic" 
+                  <Tab.Screen name="Graphic"
                       options={{
                         drawerIcon: ({color, size} ) => <MaterialCommunityIcons
                             size={size}
                             color={color}
-                            name="heart-pulse"></MaterialCommunityIcons>
+                            name="heart-pulse" />,
                     }}
                     children={() => <GraphicScreen data={data}/>}
                   />
@@ -108,8 +87,8 @@ export default function DataScreen({deviceId}) {
                       drawerIcon: ({color, size} ) => <MaterialCommunityIcons
                           size={size}
                           color={color}
-                          name="code-greater-than"></MaterialCommunityIcons>
-                     }} 
+                          name="code-greater-than" />,
+                     }}
                     children={() => <TerminalScreen data={data}/>}
                   />
           </Tab.Navigator>
