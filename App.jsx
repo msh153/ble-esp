@@ -4,41 +4,50 @@ import React, { useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import ScanScreen from './ScanScreen';
 import DataScreen from './DataScreen';
+import AnalyzeScreen from './AnalyzeScreen';
 import {
     createDrawerNavigator,
 } from '@react-navigation/drawer';
 
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-
 const Drawer = createDrawerNavigator();
 
 const App = () => {
   const [deviceId, setDeviceId] = useState();
-
+  
     return (
-                <NavigationContainer independent={true}>
-                    <Drawer.Navigator>
-                        <Drawer.Screen
-                            name="Scan"
-                            options={{
-                            drawerIcon: ({color, size} ) => <MaterialCommunityIcons
-                                size={size}
-                                color={color}
-                                name="bluetooth-audio" />,
-                        }}>
-                            {() => <ScanScreen setDeviceId={setDeviceId}/>}
-                        </Drawer.Screen>
-                        <Drawer.Screen name="Data" options={{
-                            drawerIcon: ({color, size} ) => <MaterialCommunityIcons
-                                size={size}
-                                color={color}
-                                name="heart-pulse" />,
-                        }}>
-                            {() => <DataScreen deviceId={deviceId}/>}
-                        </Drawer.Screen>
-                    </Drawer.Navigator>
-                </NavigationContainer>
+        <NavigationContainer independent={true}>
+            <Drawer.Navigator>
+                <Drawer.Screen
+                    name="Scan"
+                    options={{
+                    drawerIcon: ({color, size} ) => <MaterialCommunityIcons
+                        size={size}
+                        color={color}
+                        name="bluetooth-audio" />,
+                }}>
+                    {() => <ScanScreen setDeviceId={setDeviceId}/>}
+                </Drawer.Screen>
+                <Drawer.Screen name="Data" options={{
+                    drawerIcon: ({color, size} ) => <MaterialCommunityIcons
+                        size={size}
+                        color={color}
+                        name="heart-pulse" />,
+                }}>
+                    {() => <DataScreen deviceId={deviceId}/>}
+                </Drawer.Screen>
+                <Drawer.Screen name="Analyze" options={{
+                    drawerIcon: ({color, size} ) => <MaterialCommunityIcons
+                        size={size}
+                        color={color}
+                        name="border-none"/>,
+                }}>
+                    {() => <AnalyzeScreen/>}
+                </Drawer.Screen>
+            </Drawer.Navigator>
+        </NavigationContainer>
     );
 };
 
 export default App;
+

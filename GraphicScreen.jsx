@@ -3,11 +3,11 @@ import { Dimensions, ScrollView, SafeAreaView, Button } from 'react-native';
 import { LineChart } from 'react-native-chart-kit';
 
 
-export default function GraphicScreen({data}) {
+export default function GraphicScreen({data, contentOffsetProp}) {
   const windowWidth = Dimensions.get('window').width;
   const [chartWidth, setChartWith] = useState(windowWidth);
   const [stopWidth, setStopWidth] = useState(false);
-  const pointsPerScreen = 30;
+  const pointsPerScreen = 200;
   const [kalmanData, setKalmanData] = useState([0,2]);
   const [contentOffset, setContentOffset] = useState({ x: 26.5625 * data.length, y: 0 });
 
