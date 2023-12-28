@@ -1,12 +1,9 @@
 import React, { useState } from 'react';
-import { Text, ScrollView, SafeAreaView, NativeModules, NativeEventEmitter  } from 'react-native';  
-
-const BleManagerModule = NativeModules.BleManager;
-const bleEmitter = new NativeEventEmitter(BleManagerModule);
+import { Text, ScrollView, SafeAreaView } from 'react-native';
 
 export default function TerminalScreen({data}) {
   const [contentOffset, setContentOffset] = useState(0);
-  
+
   return (
     <SafeAreaView >
       <ScrollView
@@ -15,9 +12,9 @@ export default function TerminalScreen({data}) {
           setContentOffset(height);
         }}
         >
-          <Text>{"    Дані:"}</Text>
+          <Text>{'    Дані:'}</Text>
           {!!data && data.map((value, index) => (
-            <Text key={index}>{"    " + value}</Text>  
+            <Text key={index}>{'    ' + value}</Text>
           ))}
         </ScrollView>
     </SafeAreaView>

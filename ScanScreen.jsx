@@ -20,7 +20,7 @@ import {styles} from './src/styles/styles';
 import {DeviceList} from './src/DeviceList';
 import BleManager from 'react-native-ble-manager';
 import {Colors} from 'react-native/Libraries/NewAppScreen';
-import { ESPEcg } from './src/ESPEcgTag'
+import { ESPEcg } from './src/ESPEcgTag';
 
 const BleManagerModule = NativeModules.BleManager;
 const BleManagerEmitter = new NativeEventEmitter(BleManagerModule);
@@ -67,7 +67,7 @@ const ScanScreen = ({setDeviceId}) => {
     BleManager.enableBluetooth().then(() => {
       console.log('Bluetooth is turned on!');
     });
-    
+
     BleManager.start({showAlert: false}).then(() => {
       console.log('BleManager initialized');
       handleGetConnectedDevices();
@@ -84,7 +84,6 @@ const ScanScreen = ({setDeviceId}) => {
     let stopConnectListener = BleManagerEmitter.addListener(
       'BleManagerConnectPeripheral',
       peripheral => {
-        alert('BleManagerConnectPeripheral:', peripheral);
         setChosenPeripheral(peripheral);
       },
     );
@@ -120,16 +119,16 @@ const ScanScreen = ({setDeviceId}) => {
   const connect = peripheral => {
     BleManager.createBond(peripheral.id)
       .then((id) => {
-        setDeviceId(peripheral.id)
-        alert("connected")
-        BleManager.startNotification(peripheral.id, ESPEcg.service, ESPEcg.characteristic) 
+        setDeviceId(peripheral.id);
+        alert('connected');
+        BleManager.startNotification(peripheral.id, ESPEcg.service, ESPEcg.characteristic)
           .then(() => {
             alert('Not started:', data);
               BleManager.onCharacteristicChanged(ESPEcg.characteristic, (data) => {
                 // data contains the raw uint16 value sent from Arduino
-                const value = new Uint16Array(data.value)[0]; 
+                const value = new Uint16Array(data.value)[0];
                 alert('Received:', data);
-            })
+            });
           });
 
         peripheral.connected = true;

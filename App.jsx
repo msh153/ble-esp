@@ -18,13 +18,13 @@ const App = () => {
     return (
                 <NavigationContainer independent={true}>
                     <Drawer.Navigator>
-                        <Drawer.Screen 
+                        <Drawer.Screen
                             name="Scan"
                             options={{
                             drawerIcon: ({color, size} ) => <MaterialCommunityIcons
                                 size={size}
                                 color={color}
-                                name="bluetooth-audio"></MaterialCommunityIcons>
+                                name="bluetooth-audio" />,
                         }}>
                             {() => <ScanScreen setDeviceId={setDeviceId}/>}
                         </Drawer.Screen>
@@ -32,7 +32,7 @@ const App = () => {
                             drawerIcon: ({color, size} ) => <MaterialCommunityIcons
                                 size={size}
                                 color={color}
-                                name="heart-pulse"></MaterialCommunityIcons>
+                                name="heart-pulse" />,
                         }}>
                             {() => <DataScreen deviceId={deviceId}/>}
                         </Drawer.Screen>

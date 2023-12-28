@@ -4,6 +4,7 @@ import { ESPEcg } from './src/ESPEcgTag'
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import BleManager from 'react-native-ble-manager';
 
 const Tab = createBottomTabNavigator();
 

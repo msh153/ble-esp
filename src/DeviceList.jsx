@@ -21,7 +21,7 @@ export const DeviceList = ({ peripheral, connect, disconnect }) => {
             <Text
               style={[
                 styles.scanButtonText,
-                {fontWeight: 'bold', fontSize: 16},
+                { fontWeight: 'bold', fontSize: 16 },
               ]}>
               {'Connect'}
             </Text>
@@ -33,7 +33,7 @@ export const DeviceList = ({ peripheral, connect, disconnect }) => {
             <Text
               style={[
                 styles.scanButtonText,
-                {fontWeight: 'bold', fontSize: 16},
+                { fontWeight: 'bold', fontSize: 16 },
               ]}>
               {'Disconnect'}
             </Text>
